@@ -28,7 +28,7 @@ let api = {
         obj.init(config.data);
         obj.updateData();
         cs.push(obj);
-        console.log(`MinaComponent Log：${model.namespace}实例，`, obj);
+        console.log(`MinaComponent Log：${model.namespace}实例: `, obj);
 
         // 动态给page添加handler
         let pages = getCurrentPages();
@@ -44,7 +44,7 @@ let api = {
                     page[name] = model[name];
                 })
         }
-        console.log('Page: ', page);
+        console.log('Current Page: ', page);
         return obj;
     },
     // 更新该组件的数据

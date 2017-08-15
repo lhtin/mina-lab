@@ -2,10 +2,10 @@
 <import src="../cs/toast.c.wxml" />
 <scroll-view>
     <button bindtap="list.show" data-cid="{{list1.cid}}">点击展开/关闭列表1</button>
-    <template is="list" data="{{...list1}}" />
+    <template is="list" data="{{...list1Data}}" />
     <button bindtap="list.show" data-cid="{{list2.cid}}">点击展开/关闭列表2</button>
-    <template is="list" data="{{...list2}}" />
+    <template is="list" data="{{...list2Data}}" />
     <button bindtap="showToast">show toast</button>
-    <button bindtap="hideToast" data-cid="{{toastData.cid}}">hide toast</button>
+    <button bindtap="toast.hide" data-cid="{{toastData.cid}}">hide toast</button>
 </scroll-view>
 <template is="toast" data="{{...toastData}}" />
