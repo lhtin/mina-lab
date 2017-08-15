@@ -1,0 +1,5 @@
+<scroll-view>
+    <view class="li">
+        <navigator class="a" open-type="navigate" url="/pages/lab/component">组件继承</navigator>
+    </view>
+</scroll-view>

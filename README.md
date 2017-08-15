@@ -1,2 +1,2 @@
-# mina-lab
-补充小程序框架缺少的一些功能
+# mina-demo
+小程序使用demo

@@ -1,0 +1,25 @@
+.h1 {
+    height: 150rpx;
+    line-height: 150rpx;
+    font-size: 50rpx;
+    text-align: center;
+}
+
+.li {
+    text-align: center;
+}
+.li .a {
+    height: 80rpx;
+    line-height: 80rpx;
+    font-size: 40rpx;
+    color: blue;
+    text-decoration: underline;
+}
+
+.image {
+    width: 100%;
+}
+
+.selected {
+    color: red;
+}

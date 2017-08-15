@@ -1,0 +1,12 @@
+.toast {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    padding: 20rpx 30rpx;
+    max-width: 500rpx;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.7);
+    word-break: break-all;
+}
