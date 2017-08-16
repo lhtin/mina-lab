@@ -1,6 +1,7 @@
 import {component} from '../../utils/c';
 
-let list = component('list', {
+let list = component({
+    namespace: 'list',
     init: function (list) {
         list[0].selected = true;
         this.data = {

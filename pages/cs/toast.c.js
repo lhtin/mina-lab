@@ -1,6 +1,7 @@
 import {component} from '../../utils/c';
 
-let toast = component('toast', {
+let toast = component({
+    namespace: 'toast',
     init: function () {
         this.data = {
             isShow: false
@@ -14,7 +15,7 @@ let toast = component('toast', {
         this.timeoutId = setTimeout(() => {
             this.data.isShow = false;
             this.updateData();
-        }, timeout)
+        }, timeout);
     },
     hide: function () {
         clearTimeout(this.timeoutId);

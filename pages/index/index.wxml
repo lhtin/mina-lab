@@ -2,4 +2,5 @@
   <view class="li">
     <navigator class="a" open-type="navigate" url="/pages/index/component">组件继承</navigator>
   </view>
+  <canvas canvas-id="chart" style="width: 300px; height: 400px;"></canvas>
 </scroll-view>

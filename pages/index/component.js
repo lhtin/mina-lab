@@ -2,14 +2,10 @@ import {list} from '../cs/list.c';
 import {toast} from '../cs/toast.c';
 
 Page({
-
-    /**
-     * 页面的初始数据
-     */
     data: {},
     onLoad: function (options) {
         // 初始化列表组件1
-        list.new(this, {
+        this.list1 = list.new({
             dataName: 'list1Data',
             data: [
                 {name: '选择1'},
@@ -18,7 +14,7 @@ Page({
         });
 
         // 初始化列表组件2
-        list.new(this, {
+        this.list2 = list.new({
             dataName: 'list2Data',
             data: [
                 {name: '选择3'},
@@ -26,10 +22,20 @@ Page({
             ]
         });
 
-        this.toast1 = toast.new(this, {dataName: 'toastData'});
+        this.toast1 = toast.new({
+            dataName: 'toastData'
+        });
     },
     showToast: function () {
-        this.xxx = (this.xxx || '') + '闻';
-        this.toast1.show(this.xxx, 5000);
+        this.toast1.show('我是一个5000ms的toast', 5000);
+    },
+    hideToast: function () {
+        this.toast1.hide();
+    },
+    list1Show: function () {
+        this.list1.show();
+    },
+    list2Show: function () {
+        this.list2.show();
     }
-})
+});
