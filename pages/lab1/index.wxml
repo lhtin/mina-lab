@@ -1,0 +1,5 @@
+<import src="logs.wxml"></import>
+<scroll-view>
+    <button bindtap="gotoNext">下一页</button>
+    <template is="logs" data="{{logs}}"></template>
+</scroll-view>

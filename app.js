@@ -1,17 +1,23 @@
-import {now, log, sleep_5000} from 'utils/debug';
-
-log('App out');
-App({
-  onLaunch: function (options) {
-    log('App onLaunch');
-  },
-  onShow: function (options) {
-    log('App onShow');
-  },
-  onHide: function () {
-    log('App onHide');
-  },
-  onError: function (msg) {
-    log(msg);
-  }
+import {_App, log} from 'utils/debug';
+_App({
+    onLaunch: function (options) {
+    },
+    onShow: function (options) {
+        log(`scene: ${options.scene}`);
+        if (this.globalData.hideTime
+        && Date.now() - this.globalData.hideTime > 7000
+        && options.path === 'pages/lab1/lab') {
+            log('进入后台超过7秒钟');
+            this.globalData.needBack = true;
+        }
+    },
+    onHide: function () {
+        this.globalData.hideTime = Date.now();
+    },
+    onError: function (msg) {
+    },
+    globalData: {
+        hideTime: false,
+        needBack: false
+    }
 });

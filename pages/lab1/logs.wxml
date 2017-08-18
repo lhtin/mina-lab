@@ -1,0 +1,5 @@
+<template name="logs">
+    <view wx:for="{{logs}}" class="item">
+        <text>{{item.time}} {{item.msg}}</text>
+    </view>
+</template>

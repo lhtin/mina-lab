@@ -1,4 +1,4 @@
-import {now, log, sleep_5000} from '../../utils/debug';
+import {now, log, sleep_3000} from '../../utils/debug';
 let wxCharts = require('../../utils/wxcharts');
 
 log('Page index out');
