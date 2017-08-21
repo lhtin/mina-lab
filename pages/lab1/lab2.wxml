@@ -1,0 +1,7 @@
+<import src="../cs/list2.c.wxml" />
+<scroll-view>
+    <button bindtap="list1Show">点击展开/关闭列表1</button>
+    <template is="list2" data="{{...list1}}" />
+    <button bindtap="list2Show">点击展开/关闭列表2</button>
+    <template is="list2" data="{{...list2}}" />
+</scroll-view>

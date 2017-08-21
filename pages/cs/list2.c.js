@@ -1,25 +1,33 @@
-import {Component} from '../../utils/debug';
+import {Component} from '../../utils/c1';
 
-let List = Component({
-    init(list) {
+class List extends Component {
+    constructor() {
+        super();
         this.data = {
-            list: list,
+            list: [],
             isShow: false
-        };
-    },
+        }
+    }
+
+    setList(list) {
+        list[0].selected = true;
+        this.data.list = list;
+        this.updateData();
+    }
+
     select(e) {
         let dataset = e.currentTarget.dataset;
-        console.log('select: ', dataset);
         let name = dataset.name;
         let list = this.data.list;
         list.filter(item => item.selected).map(item => item.selected = false);
         list.filter(item => item.name === name).map(item => item.selected = true);
-    },
-    show() {
-        let data = this.data;
-        data.isShow = !data.isShow;
-        console.log(data);
+        this.updateData();
     }
-});
+
+    show() {
+        this.data.isShow = !this.data.isShow;
+        this.updateData();
+    }
+}
 
 export {List};
