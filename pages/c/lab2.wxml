@@ -1,5 +1,5 @@
 <import src="selector.c.wxml" />
 <scroll-view>
-    <view>已选（组件外）：{{list1Selected.name}}</view>
-    <template is="selector" data="{{...list1}}" />
+    <view>已选（组件外）：{{selector1Selected.name}}</view>
+    <template is="selector" data="{{...selector1}}" />
 </scroll-view>

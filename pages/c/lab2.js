@@ -1,33 +1,21 @@
 import {_Page} from '../../utils/c1';
-
 import {Selector} from './selector.c';
-
 _Page({
-    data: {
-        list1Selected: '',
-        list2Selected: ''
-    },
+    data: {},
     component: {
-        list1: new Selector(), // 同时会设置 data.list1
-        list2: new Selector()  // 同时会设置 data.list2
+        selector1: new Selector()
     },
-    list1Show: function () {
-        this.list1.show();
-    },
-    list2Show: function () {
-        this.list2.show();
+    selector1Show: function () {
+        this.selector1.show();
     },
     onLoad: function () {
-        this.list1.on('select', (selected) => {
+        this.selector1.on('select', (selected) => {
             console.log('onSelect', selected);
             this.setData({
-                list1Selected: selected
+                selector1Selected: selected
             })
         });
-        this.list1.on('show', () => {
-            this.list1.reorder(12);
-        });
-        this.list1.setList([
+        this.selector1.setList([
             {
                 name: '西兰花'
             },
