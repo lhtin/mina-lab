@@ -1,57 +1,19 @@
-import {EventCenter} from './EventCenter';
-
-let cid = (() => {
-    let _cid = 0;
-    return () => {
-        _cid += 1;
-        return `cid_${_cid}`;
+class EventCenter {
+    constructor() {
+        this.handlers = {};
     }
-})();
 
-let _Page = (page) => {
+    emit(eventType, data) {
+        let cbs = this.handlers[eventType];
+        cbs && cbs.map(cb => cb(data));
+    }
 
-    // 处理组件
-    let _onLoad = page.onLoad;
-    page.onLoad = function (...args) {
-        console.log('在onLoad添加组件');
-        Object.getOwnPropertyNames(this.component || {})
-            .map((key) => {
-                let instance = this.component[key];
-                if (!(instance instanceof Component)) {
-                    throw new Error('组件没有继承 Component 类');
-                }
-                instance.__init__({
-                    pageCtx: this,
-                    namespace: key
-                });
-                this[key] = instance;
-
-                let proto = Object.getPrototypeOf(instance);
-                Object.getOwnPropertyNames(proto)
-                    .filter((key) => typeof proto[key] === 'function' && key !== 'constructor')
-                    .map((key) => {
-                        let f = proto[key];
-                        let _f = this[key];
-                        // 核心部分，根据cid分发回调到具体的组件实例
-                        this[key] = function (...args) {
-                            console.log(`回调 ${key} 被调用，参数：`, args);
-                            let event = args.length > 0 ? args[0] : false;
-                            let cid = event && event.currentTarget
-                                && event.currentTarget.dataset
-                                && event.currentTarget.dataset.cid;
-                            if (instance.cid === cid) {
-                                f.call(instance, ...args);
-                            } else {
-                                _f && _f.call(this, ...args);
-                            }
-                        };
-                    })
-            });
-        console.log('添加完组件后的page：', this);
-        _onLoad && _onLoad.call(this, ...args);
-    };
-    Page(page);
-};
+    on(eventType, cb) {
+        let cbs = this.handlers[eventType] || [];
+        cbs.push(cb);
+        this.handlers[eventType] = cbs;
+    }
+}
 
 class Component {
     constructor() {
@@ -84,4 +46,57 @@ class Component {
     }
 }
 
-export {_Page, Component};
+let cid = (() => {
+    let _cid = 0;
+    return () => {
+        _cid += 1;
+        return `cid_${_cid}`;
+    }
+})();
+
+let _Page = (page) => {
+
+    // 处理组件
+    let _onLoad = page.onLoad;
+    page.onLoad = function (...args) {
+        console.log('在onLoad添加组件');
+        Object.getOwnPropertyNames(this.component || {})
+            .map((key) => {
+                let instance = this.component[key];
+                if (!(instance instanceof Component)) {
+                    throw new Error('组件没有继承 Component 类');
+                }
+                instance.__init__({
+                    pageCtx: this,
+                    namespace: key
+                });
+                this[key] = instance;
+
+                let proto = Object.getPrototypeOf(instance) || {};
+                Object.getOwnPropertyNames(proto)
+                    .filter((key) => typeof proto[key] === 'function' && key !== 'constructor')
+                    .map((key) => {
+                        let f = proto[key];
+                        let _f = this[key];
+                        // 核心部分，根据cid分发回调到具体的组件实例
+                        this[key] = function (...args) {
+                            console.log(`回调 ${key} 被调用，参数：`, args);
+                            let event = args.length > 0 ? args[0] : false;
+                            let cid = event && event.currentTarget
+                                && event.currentTarget.dataset
+                                && event.currentTarget.dataset.cid;
+                            if (instance.cid === cid) {
+                                f.call(instance, ...args);
+                            } else {
+                                _f && _f.call(this, ...args);
+                            }
+                        };
+                    })
+            });
+        console.log('添加完组件后的page：', this);
+        _onLoad && _onLoad.call(this, ...args);
+    };
+    Page(page);
+};
+
+export {Component, _Page};
