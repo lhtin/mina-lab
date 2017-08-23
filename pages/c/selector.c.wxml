@@ -1,8 +1,9 @@
 <template name="selector">
-    <button bindtap="show" data-cid="{{cid}}">{{isShow ? '请选择' : '展开列表'}}</button>
+    -----------------------------
     <view class="li" wx:if="{{isShow}}">
         <view wx:for="{{list}}" bindtap="select" data-cid="{{cid}}" data-name="{{item.name}}"
             class="{{item.selected ? 'selected' : ''}}">{{item.name}}</view>
     </view>
     <view>已选（组件内）：{{selected.name}}</view>
+    ----------------------------
 </template>

@@ -1,5 +1,10 @@
 <import src="selector.c.wxml" />
 <scroll-view>
-    <view>已选（组件外）：{{selector1Selected.name}}</view>
-    <template is="selector" data="{{...selector1}}" />
+    <button bindtap="showSelector1">展开选择列表1</button>
+    <view>已选1（页面中）：{{selector1Selected.name}}</view>
+    <template is="selector" data="{{...selector1Data}}" />
+    ---------------------------------
+    <button bindtap="showSelector2">展开选择列表2</button>
+    <view>已选2（页面中）：{{selector2Selected.name}}</view>
+    <template is="selector" data="{{...selector2Data}}" />
 </scroll-view>
