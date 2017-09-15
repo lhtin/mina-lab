@@ -38,7 +38,7 @@ class Selector extends Component {
     setList(list) {
         list[0].selected = true;
         let selected = list[0];
-        this.setData({
+        this.setKeyValue({
             selected: selected,
             list: list
         });
@@ -54,7 +54,7 @@ class Selector extends Component {
         list.filter(item => item.selected).map(item => item.selected = false);
         list.filter(item => item.name === name).map(item => item.selected = true);
         let selected = this.getSelected();
-        this.setData({
+        this.setKeyValue({
             selected: selected,
             list: list,
             isShow: false
@@ -62,7 +62,7 @@ class Selector extends Component {
         this.emit('select', selected);
     }
     show() {
-        this.setData({
+        this.setKeyValue({
             isShow: !this.data.isShow
         });
     }
@@ -92,7 +92,7 @@ export {Selector};
 }
 ```
 
-可以看到，组件也是通过**`setData`**和**事件回调**实现逻辑层与视图层之间的交互，**使用方式基本可以类似Page**。
+可以看到，组件也是通过**`setKeyValue`**和**事件回调**实现逻辑层与视图层之间的交互，**使用方式基本可以类似Page**。
 
 跟Page有所区别的地方是，在模版中给标签设置事件回调时，必须同时设置`data-cid`属性，`cid`是组件实例的唯一标识，用于确保事件回调能准确的分发到组件实例。至于`cid`的生成，是在组件封装库在初始化组件的时候添加的，用户无需关注。**只需要记住组件模版里面有一个`cid`变量，在设置组件中的事件回调时，也必须设置`data-cid`属性为`cid`的值**。
 
@@ -118,7 +118,7 @@ _Page({
     onLoad: function () {
         this.selector1.on('select', (selected) => {
             console.log('onSelect', selected);
-            this.setData({
+            this.setKeyValue({
                 selector1Selected: selected
             })
         });
