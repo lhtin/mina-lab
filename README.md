@@ -100,14 +100,14 @@ export {Selector};
 
 对于组件使用者来说，组件是一个黑盒子，页面通过组件实例的方法与组件进行交互，包括两种形式。一是调用组件实例的方法（主动），二是监听组件实例的某个事件（被动）。
 
-将组件添加到页面中去，是通过页面的属性`component`对象，这是一个新增加的属性，由组件封装器做处理，即代码中的`_Page`。
+将组件添加到页面中去，是通过页面的属性`component`对象，这是一个新增加的属性，由组件封装器做处理，即代码中的`MyPage`。
 
 ```js
 /* Page逻辑层 */
 // Page中去使用上文定义的Selector组件
-import {_Page} from '../../utils/c1';
+import {MyPage} from '../../utils/c1';
 import {Selector} from './selector.c';
-_Page({
+MyPage({
     data: {},
     component: {
         selector1: new Selector()

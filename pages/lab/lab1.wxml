@@ -1,0 +1,23 @@
+<import src="../cs/Selector.wxml" />
+<!--<scroll-view>-->
+    <!--<button bindtap="showSelector1">点击展开选项</button>-->
+    <!--<template is="Selector" data="{{...selector1Data}}" />-->
+    <!--&#45;&#45;&#45;&#45;&#45;&#45;-->
+    <!--<view>已选择：{{selector1.selected}}</view>-->
+
+<!--</scroll-view>-->
+<camera device-position="front" flash="off" bindstop="onCameraStop" binderror="onCameraError" style="width: 320px;height: 320px;">
+    <cover-view style="position: relative;">
+        <cover-image src="./xxx.png" style="width: 100%; height: 100%"></cover-image>
+        <cover-view style="font-size: 80px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)">1</cover-view>
+    </cover-view>
+</camera>
+<button bindtap="takePhoto">拍照</button>
+<scroll-view>
+    <image src="{{photoPath}}" mode="aspectFit" style="width: 100%"></image>
+</scroll-view>
+
+<!--<button bindtap="uploadPhoto">上传照片</button>-->
+<!--<scroll-view>-->
+    <!--<image wx:for="{{tempFilePaths}}" src="{{item}}" mode="aspectFit" style="width: 100%"></image>-->
+<!--</scroll-view>-->

@@ -1,8 +1,6 @@
 {
     "pages": [
-        "pages/c/lab2",
-        "pages/lab1/index",
-        "pages/lab1/lab"
+        "pages/cs/lab"
     ],
     "window": {
         "navigationBarBackgroundColor": "#000000",

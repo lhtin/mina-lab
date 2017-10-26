@@ -1,4 +1,4 @@
-import {isSamePath, setKeyValue, getValue} from './utils';
+import {isSamePath, setKeyValue, getValue} from './c';
 
 let failed = 0;
 const test = (desc, result) => {

@@ -1,7 +1,0 @@
-.li {
-    text-align: center;
-}
-
-.li .selected {
-    color: red;
-}

@@ -1,0 +1,6 @@
+<template name="Selector">
+    <view class="li" wx:if="{{isShow}}">
+        <view wx:for="{{list}}" bindtap="onSelect" data-cid="{{cid}}" data-index="{{index}}"
+            class="item {{index === selectedIndex ? 'selected' : ''}}">{{item}}</view>
+    </view>
+</template>

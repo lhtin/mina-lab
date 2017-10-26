@@ -1,9 +1,0 @@
-<template name="selector">
-    -----------------------------
-    <view class="li" wx:if="{{isShow}}">
-        <view wx:for="{{list}}" bindtap="select" data-cid="{{cid}}" data-name="{{item.name}}"
-            class="{{item.selected ? 'selected' : ''}}">{{item.name}}</view>
-    </view>
-    <view>已选（组件内）：{{selected.name}}</view>
-    ----------------------------
-</template>

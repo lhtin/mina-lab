@@ -223,6 +223,131 @@ let cid = (() => {
     }
 })();
 
+let api = {
+    _setData: function (newData) {
+        log('Invoke _setData');
+        let __context__ = this.__context__;
+        Object.getOwnPropertyNames(newData)
+            .map((key) => setKeyValue(this.data, key, newData[key]));
+        let data = deepClone(this.data);
+        data.cid = __context__.cid;
+        let obj = {};
+        obj[__context__.namespace] = data;
+        __context__.pageCtx.setData(obj);
+    },
+    /**
+     * @param {string} propName 需要设置的属性名
+     * @param {Object} data 数据
+     * @param {Boolean} [ignore] 表示是否是首次从外面传入数据，是则不调用observer
+     */
+    _setProp: function (propName, data, ignore) {
+        log('Invoke _setProp');
+        let __context__ = this.__context__;
+        let prop = __context__.properties[propName];
+        if (prop && prop.value !== data) {
+            let oldVal = prop.value,
+                newVal = data;
+            let obj = {};
+            obj[propName] = newVal;
+            this._setData(obj);
+            prop.value = newVal;
+            if (!ignore && typeof prop.observer === 'function') {
+                prop.observer.call(this, newVal, oldVal);
+            }
+        }
+    },
+    setData: function (newData) {
+        log('Invoke setData');
+        let __context__ = this.__context__;
+        let _newData = {};
+        Object.getOwnPropertyNames(newData)
+            .filter(key => !__context__.properties[key]) // 不允许组件的setData设置properties的属性
+            .map(key => _newData[key] = newData[key]);
+        this._setData(_newData);
+    },
+    triggerEvent: function (eventType, detail) {
+        log(`Invoke triggerEvent eventType: ${eventType}`);
+        let __context__ = this.__context__;
+        __context__.events.map(item => {
+            if (item.type === eventType) {
+                // 执行page中的handlerName
+                let handler = __context__.pageCtx[item.handlerName];
+                if (typeof handler === 'function') {
+                    handler.call(__context__.pageCtx, detail);
+                }
+            }
+        });
+    },
+    hasBehavior: function () {
+        return false;
+    },
+
+    // 默认的组件生命周期方法
+    ready: function () {
+    },
+    attached: function () {
+    }
+};
+
+/**
+ * @param {Object} component - 组件逻辑
+ * @returns {{new: new}}
+ */
+let MyComponent = (component) => {
+    let componentAPI = Object.assign(Object.create(api), component.methods);
+    return {
+        new: function (config) {
+            log(`通过调用组件的 new 进行初始化，数据名称为 ${config.namespace}`);
+            log(`标签使用为 ${config.use}`);
+            // 深度复制组件的properties
+            let properties = {};
+            Object.getOwnPropertyNames(component.properties || {})
+                .map((propName) => {
+                    let prop = component.properties[propName];
+                    let obj = {
+                        type: prop.type || undefined,
+                        value: deepClone(prop.value)
+                    };
+                    if (prop.observer) {
+                        obj.observer = prop.observer;
+                    }
+                    properties[propName] = obj;
+                });
+
+            // 组件实例继承componentAPI
+            let instance = Object.create(componentAPI);
+
+            // 深度复制组件的data
+            let data = deepClone(component.data || {});
+            instance.data = data;
+
+            // 实例的私有信息，防止命名冲突
+            log('解析组件配置中的 use 属性');
+            let use = parseUseStr(config.use, properties);
+            instance.__context__ = {
+                pageCtx: config.pageCtx,
+                namespace: config.namespace,
+                properties: properties,
+                cid: cid(),
+                events: use.events,
+                outerProperties: use.properties
+            };
+
+            if (component.ready) {
+                instance.ready = component.ready;
+            }
+            if (component.attached) {
+                instance.attached = component.attached;
+            }
+
+            log('第一次更新组件的 data');
+            instance.setData(data);
+            return instance;
+        }
+    };
+
+};
+
 /**
  * @param {Object} page - 页面配置
  */
@@ -306,165 +431,6 @@ let MyPage = (page) => {
         _instances.map(instance => instance.ready());
     };
     wxPage(page);
-};
-
-let api = {
-    _setData: function (newData) {
-        log('Invoke _setData');
-        let __context__ = this.__context__;
-        Object.getOwnPropertyNames(newData)
-            .map((key) => setKeyValue(this.data, key, newData[key]));
-        let data = deepClone(this.data);
-        data.cid = __context__.cid;
-        let obj = {};
-        obj[__context__.namespace] = data;
-        __context__.pageCtx.setData(obj);
-    },
-    /**
-     * @param {string} propName 需要设置的属性名
-     * @param {Object} data 数据
-     * @param {Boolean} [ignore] 表示是否是首次从外面传入数据，是则不调用observer
-     */
-    _setProp: function (propName, data, ignore) {
-        log('Invoke _setProp');
-        let __context__ = this.__context__;
-        let prop = __context__.properties[propName];
-        if (prop && prop.value !== data) {
-            let oldVal = prop.value,
-                newVal = data;
-            let obj = {};
-            obj[propName] = newVal;
-            this._setData(obj);
-            prop.value = newVal;
-            if (!ignore && typeof prop.observer === 'function') {
-                prop.observer.call(this, newVal, oldVal);
-            }
-        }
-    },
-    setData: function (newData) {
-        log('Invoke setData');
-        let __context__ = this.__context__;
-        let _newData = {};
-        Object.getOwnPropertyNames(newData)
-            .filter(key => !__context__.properties[key]) // 不允许组件的setData设置properties的属性
-            .map(key => _newData[key] = newData[key]);
-        this._setData(_newData);
-    },
-    triggerEvent: function (eventType, detail) {
-        log(`Invoke triggerEvent eventType: ${eventType}`);
-        let __context__ = this.__context__;
-        __context__.events.map(item => {
-            if (item.type === eventType) {
-                // 执行page中的handlerName
-                let handler = __context__.pageCtx[item.handlerName];
-                if (typeof handler === 'function') {
-                    handler.call(__context__.pageCtx, detail);
-                }
-            }
-        });
-    },
-    replaceDataOnPath: function (path, newData) {
-        log('Invoke replaceDataOnPath');
-        let __context__ = this.__context__;
-        if (__context__.properties[path[0]]) {
-            return;
-        }
-        __context__.lazyData[_getKey(path)] = newData;
-    },
-    mergeDataOnPath: function (path, newData) {
-        log('Invoke mergeDataOnPath');
-        let __context__ = this.__context__;
-        if (__context__.properties[path[0]]) {
-            return;
-        }
-        let oldData = getValue(__context__.lazyData, path);
-        let oldDataType = typeof oldData;
-        let newDataType = typeof newData;
-        if (['boolean', 'string', 'number', 'undefined'].indexOf(oldDataType) > -1
-            || oldData === null || Array.isArray(oldData)
-            || ['boolean', 'string', 'number', 'undefined'].indexOf(newDataType) > -1
-            || newData === null || Array.isArray(newData)) {
-        } else {
-            Object.getOwnPropertyNames(oldData)
-                .map(key => newData[key] = oldData[key]);
-        }
-        __context__.lazyData[_getKey(path)] = newData;
-    },
-    applyDataUpdates: function () {
-        log('Invoke applyDataUpdates');
-        let __context__ = this.__context__;
-        this.setData(__context__.lazyData);
-        __context__.lazyData = {};
-    },
-    hasBehavior: function () {
-        return false;
-    },
-
-    // 默认的组件生命周期方法
-    ready: function () {
-    },
-    attached: function () {
-    }
-};
-
-/**
- * @param {Object} component - 组件逻辑
- * @returns {{new: new}}
- */
-let MyComponent = (component) => {
-    let componentAPI = Object.assign(Object.create(api), component.methods);
-    return {
-        new: function (config) {
-            log(`通过调用组件的 new 进行初始化，数据名称为 ${config.namespace}`);
-            log(`标签使用为 ${config.use}`);
-            // 深度复制组件的properties
-            let properties = {};
-            Object.getOwnPropertyNames(component.properties || {})
-                .map((propName) => {
-                    let prop = component.properties[propName];
-                    let obj = {
-                        type: prop.type || undefined,
-                        value: deepClone(prop.value)
-                    };
-                    if (prop.observer) {
-                        obj.observer = prop.observer;
-                    }
-                    properties[propName] = obj;
-                });
-
-            // 组件实例继承componentAPI
-            let instance = Object.create(componentAPI);
-
-            // 深度复制组件的data
-            let data = deepClone(component.data || {});
-            instance.data = data;
-
-            // 实例的私有信息，防止命名冲突
-            log('解析组件配置中的 use 属性');
-            let use = parseUseStr(config.use, properties);
-            instance.__context__ = {
-                pageCtx: config.pageCtx,
-                namespace: config.namespace,
-                properties: properties,
-                cid: cid(),
-                events: use.events,
-                outerProperties: use.properties,
-                lazyData: {}
-            };
-
-            if (component.ready) {
-                instance.ready = component.ready;
-            }
-            if (component.attached) {
-                instance.attached = component.attached;
-            }
-
-            log('第一次更新组件的 data');
-            instance.setData(data);
-            return instance;
-        }
-    };
-
 };
 
 export {MyPage, MyComponent, isSamePath, setKeyValue, getValue};

@@ -15,6 +15,7 @@ _App({
         this.globalData.hideTime = Date.now();
     },
     onError: function (msg) {
+        console.log(msg);
     },
     globalData: {
         hideTime: false,

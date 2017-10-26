@@ -1,0 +1,6 @@
+<import src="Selector.wxml" />
+<scroll-view>
+    <button bindtap="showSelector">点击展开选项</button>
+    <template is="Selector" data="{{...selectorData}}" />
+    <view>已选择：{{selector.selected}}</view>
+</scroll-view>
