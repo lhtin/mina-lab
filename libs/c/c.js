@@ -153,13 +153,12 @@ function isSamePath(key1, key2) {
  * @param {Object} jsonData
  */
 function deepClone(jsonData) {
-    log(jsonData);
     return JSON.parse(JSON.stringify(jsonData));
 }
 
 /**
  * 解析组件使用模版，例如：
- * <my-tag inner-list="{{my.list}}" bindtap="onTap"></my-tag>
+ * <my-tag inner-list="{{my.list}}" bind:tap="onTap"></my-tag>
  * 输出为：
  * {
  *   properties: [
@@ -170,8 +169,8 @@ function deepClone(jsonData) {
  *   ]
  * }
  *
- * @param {string} useStr 标签使用字符串
- * @param {Object} properties 组件中设置了的properties，只有组件中设置了的属性使用者才可以传入
+ * @param {string} useStr - 标签使用字符串
+ * @param {Object} properties - 组件中设置了的properties，只有组件中设置了的属性使用者才可以传入
  * @returns {Object}
  */
 function parseUseStr(useStr, properties) {
@@ -191,8 +190,8 @@ function parseUseStr(useStr, properties) {
     items.map(item => {
         let inner = item[0],
             outer = item[1];
-        if (inner.indexOf('bind') === 0) {
-            inner = inner.replace(/^bind/, '');
+        if (inner.indexOf('bind:') === 0) {
+            inner = inner.replace(/^bind:/, '');
             result.events.push({
                 type: inner,
                 handlerName: outer
@@ -223,6 +222,9 @@ let cid = (() => {
     }
 })();
 
+/**
+ * 组件api
+ */
 let api = {
     _setData: function (newData) {
         log('Invoke _setData');
@@ -236,9 +238,9 @@ let api = {
         __context__.pageCtx.setData(obj);
     },
     /**
-     * @param {string} propName 需要设置的属性名
-     * @param {Object} data 数据
-     * @param {Boolean} [ignore] 表示是否是首次从外面传入数据，是则不调用observer
+     * @param {string} propName - 需要设置的属性名
+     * @param {Object} data - 数据
+     * @param {Boolean} [ignore] - 表示是否是首次从外面传入数据，是则不调用observer
      */
     _setProp: function (propName, data, ignore) {
         log('Invoke _setProp');
@@ -281,16 +283,21 @@ let api = {
     hasBehavior: function () {
         return false;
     },
-
-    // 默认的组件生命周期方法
-    ready: function () {
+    selectComponent: function (selector) {
+        return null;
     },
-    attached: function () {
+    selectAllComponents: function (selector) {
+        return [];
     }
 };
 
 /**
- * @param {Object} component - 组件逻辑
+ * @param {Object} component - 组件对象
+ * @param {Object} [component.properties]
+ * @param {Object} [component.data]
+ * @param {Object} [component.methods]
+ * @param {Function} [component.attached]
+ * @param {Function} [component.ready]
  * @returns {{new: new}}
  */
 let MyComponent = (component) => {
@@ -324,6 +331,7 @@ let MyComponent = (component) => {
             // 实例的私有信息，防止命名冲突
             log('解析组件配置中的 use 属性');
             let use = parseUseStr(config.use, properties);
+            log('use属性解析结果：', use);
             instance.__context__ = {
                 pageCtx: config.pageCtx,
                 namespace: config.namespace,
@@ -424,13 +432,15 @@ let MyPage = (page) => {
         log('添加完组件后的page：', this);
 
         log('调用组件的attached');
-        _instances.map(instance => instance.attached());
+        _instances.filter(instance => typeof instance.attached === 'function')
+            .map(instance => instance.attached());
         log('调用page的onLoad');
         _onLoad && _onLoad.call(this, ...args);
         log('调用组件的ready');
-        _instances.map(instance => instance.ready());
+        _instances.filter(instance => typeof instance.ready === 'function')
+            .map(instance => instance.ready());
     };
     wxPage(page);
 };
 
-export {MyPage, MyComponent, isSamePath, setKeyValue, getValue};
+export {MyPage, MyComponent, isSamePath, setKeyValue, getValue, log};

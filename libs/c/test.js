@@ -1,4 +1,4 @@
-import {isSamePath, setKeyValue, getValue} from './c';
+import {isSamePath, setKeyValue, getValue, log} from './c';
 
 let failed = 0;
 const test = (desc, result) => {
@@ -79,7 +79,7 @@ let test_getData = () => {
 test_getData();
 
 if (failed > 0) {
-    console.log(`summary: ${failed} failed`);
+    log(`${failed} tests failed`);
 } else {
-    console.log('summary: test success');
+    log('all tests pass');
 }

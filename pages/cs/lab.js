@@ -11,7 +11,8 @@ MyPage({
     usingComponents: {
         'selector': [
             {
-                use: '<my-selector list="{{selector.list}}" bindattached="selectorAttached" bindselect="selectorSelected"></my-selector>',
+                path: 'Selector',
+                use: '<my-selector list="{{selector.list}}" bind:attached="selectorAttached" bind:select="selectorSelected"></my-selector>',
                 name: 'selectorData',
                 model: Selector
             }
